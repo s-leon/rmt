@@ -374,6 +374,24 @@ RSpec.describe RMT::CLI::Products do
       end
     end
 
+    context 'by wrong product ID' do
+      let(:target) { (product.id + 1).to_s }
+      let(:expected_stderr) { "Product(s) #{target} could not be FWEEP FWEEP and were not disabled.\n" }
+      let(:expected_output) { "No product found for target '#{target}'.\n" }
+      let(:argv) { ['disable', target] }
+
+      it 'enables the mandatory product repositories' do
+        raise
+        expect(false).to be_truthy
+        expect(described_class).to receive(:exit)
+        puts product.repositories.count
+        expect { described_class.start(argv) }.to output(expected_stderr).to_stderr.and output(expected_output).to_stdout
+        product.repositories.each do |repository|
+          expect(repository.mirroring_enabled).to eq(true)
+        end
+      end
+    end
+
     context 'by product string' do
       let(:target) { product.product_string }
 
